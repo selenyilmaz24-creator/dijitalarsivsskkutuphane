@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kurumsal Dijital Arşiv</title>
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/2965/2965335.png" type="image/png">
     
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -193,14 +194,20 @@
 
                 const form = reactive({ title: '', tag: '', desc: '' });
 
-                // Admin mi kontrolü (Kod içindeki kontrol)
+                // Admin mi kontrolü
                 const isAdmin = computed(() => {
                     return user.value && user.value.email === ADMIN_EMAIL;
                 });
 
                 const login = async () => {
-                    try { await signInWithPopup(auth, new GoogleAuthProvider()); } 
-                    catch(e) { console.error(e); }
+                    try { 
+                        const provider = new GoogleAuthProvider();
+                        await signInWithPopup(auth, provider);
+                    } 
+                    catch(e) { 
+                        console.error("Giriş Hatası:", e);
+                        alert("Giriş yapılamadı: " + e.message);
+                    }
                 };
 
                 const logout = () => signOut(auth);
@@ -208,7 +215,7 @@
                 onAuthStateChanged(auth, (u) => {
                     user.value = u;
                     isLoading.value = false;
-                    fetchData(); // Giriş yapmasa bile verileri çek (Okuma izni herkese açık olduğu için)
+                    fetchData(); 
                 });
 
                 const fetchData = () => {
@@ -244,7 +251,7 @@
                             tag: form.tag || 'Genel',
                             desc: form.desc,
                             date: new Date().toLocaleString('tr-TR'),
-                            createdAt: Date.now(), // Sıralama için
+                            createdAt: Date.now(),
                             author: user.value.displayName,
                             authorEmail: user.value.email
                         });
