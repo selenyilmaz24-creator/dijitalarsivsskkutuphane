@@ -3,24 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kurumsal Dijital Arşiv | v2.0</title>
+    <title>Kurumsal Dijital Arşiv</title>
     
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
         body { font-family: 'Inter', sans-serif; }
         .fade-enter-active, .fade-leave-active { transition: opacity 0.3s ease; }
         .fade-enter-from, .fade-leave-to { opacity: 0; }
-        
-        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
 
     <script>
@@ -28,9 +24,8 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#0f172a', // Slate 900
-                        secondary: '#334155', // Slate 700
-                        accent: '#3b82f6', // Blue 500
+                        primary: '#1e293b', 
+                        accent: '#2563eb', 
                     }
                 }
             }
@@ -42,114 +37,90 @@
     <div id="app" class="h-full flex flex-col">
 
         <div v-if="isLoading" class="fixed inset-0 bg-white z-[60] flex items-center justify-center">
-            <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-accent"></div>
+            <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-accent"></div>
         </div>
 
-        <div v-if="!user" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900 bg-opacity-90 backdrop-blur-sm">
-            <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md text-center transform transition-all hover:scale-105 duration-300">
-                <div class="mb-6 bg-blue-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto text-accent text-3xl">
-                    <i class="fas fa-shield-alt"></i>
-                </div>
-                <h1 class="text-2xl font-bold text-slate-800 mb-2">Kurumsal Arşiv Girişi</h1>
-                <p class="text-slate-500 mb-8 text-sm">Erişim sağlamak için yetkili Google hesabı ile oturum açın.</p>
-                <button @click="login" class="w-full bg-slate-900 text-white py-3 rounded-xl font-medium hover:bg-slate-800 transition flex items-center justify-center gap-3 shadow-lg">
-                    <i class="fab fa-google"></i> Google ile Giriş Yap
-                </button>
-            </div>
-        </div>
-
-        <div v-else class="flex h-full">
-            
-            <aside class="w-64 bg-primary text-slate-300 flex flex-col shadow-xl z-20 transition-all duration-300">
-                <div class="p-6 border-b border-slate-700">
-                    <div class="flex items-center gap-3 text-white font-bold text-xl tracking-tight">
+        <div class="flex h-full">
+            <aside class="w-72 bg-primary text-slate-300 flex flex-col shadow-2xl z-20">
+                <div class="p-6 border-b border-slate-700 bg-slate-900">
+                    <div class="flex items-center gap-3 text-white font-bold text-xl">
                         <i class="fas fa-archive text-accent"></i>
-                        <span>ARCHIVE<span class="text-accent">PRO</span></span>
+                        <span>DİJİTAL<span class="text-accent">ARŞİV</span></span>
                     </div>
+                    <p class="text-xs text-slate-500 mt-1">Yazılı Belge Yönetim Sistemi</p>
                 </div>
 
-                <nav class="flex-1 p-4 space-y-2">
-                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 pl-2">Kategoriler</p>
-                    
-                    <button @click="currentTab = 'ssk'" 
-                        :class="currentTab === 'ssk' ? 'bg-accent text-white shadow-lg shadow-blue-500/30' : 'hover:bg-secondary hover:text-white'"
-                        class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group">
-                        <i class="fas fa-hospital-user w-5 text-center"></i>
-                        <span class="font-medium">SSK Belgeleri</span>
-                        <span class="ml-auto text-xs bg-white/20 px-2 py-0.5 rounded-full">{{ filteredSSK.length }}</span>
+                <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
+                    <button @click="currentTab = 'ssk'" :class="currentTab === 'ssk' ? 'bg-accent text-white' : 'hover:bg-slate-800'" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all">
+                        <i class="fas fa-hospital-user w-5"></i> <span class="font-medium">SSK Belgeleri</span>
                     </button>
 
-                    <button @click="currentTab = 'kutuphane'" 
-                        :class="currentTab === 'kutuphane' ? 'bg-accent text-white shadow-lg shadow-blue-500/30' : 'hover:bg-secondary hover:text-white'"
-                        class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200">
-                        <i class="fas fa-book-reader w-5 text-center"></i>
-                        <span class="font-medium">Kütüphane</span>
-                        <span class="ml-auto text-xs bg-white/20 px-2 py-0.5 rounded-full">{{ filteredLibrary.length }}</span>
+                    <button @click="currentTab = 'kutuphane'" :class="currentTab === 'kutuphane' ? 'bg-accent text-white' : 'hover:bg-slate-800'" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all">
+                        <i class="fas fa-book-reader w-5"></i> <span class="font-medium">Kütüphane</span>
                     </button>
                 </nav>
 
-                <div class="p-4 border-t border-slate-700">
-                    <div class="flex items-center gap-3 mb-4 px-2">
-                        <img :src="user.photoURL" class="w-10 h-10 rounded-full border-2 border-slate-500">
-                        <div class="overflow-hidden">
-                            <p class="text-sm font-semibold text-white truncate">{{ user.displayName }}</p>
-                            <p class="text-xs text-slate-400 truncate">{{ user.email }}</p>
+                <div class="p-4 bg-slate-900 border-t border-slate-700">
+                    <div v-if="user" class="flex flex-col gap-2">
+                        <div class="flex items-center gap-3">
+                            <img :src="user.photoURL" class="w-10 h-10 rounded-full border-2 border-slate-600">
+                            <div class="overflow-hidden">
+                                <p class="text-sm font-semibold text-white truncate">{{ user.displayName }}</p>
+                                <span v-if="isAdmin" class="text-[10px] bg-green-600 text-white px-2 py-0.5 rounded-full font-bold tracking-wide">YÖNETİCİ</span>
+                                <span v-else class="text-[10px] bg-slate-600 text-white px-2 py-0.5 rounded-full">ZİYARETÇİ</span>
+                            </div>
                         </div>
+                        <button @click="logout" class="text-xs text-red-400 hover:text-red-300 mt-2 flex items-center gap-2 w-full justify-center border border-slate-700 py-1 rounded">
+                            <i class="fas fa-sign-out-alt"></i> Çıkış Yap
+                        </button>
                     </div>
-                    <button @click="logout" class="w-full text-xs text-red-400 hover:text-red-300 text-left pl-2 flex items-center gap-2">
-                        <i class="fas fa-sign-out-alt"></i> Güvenli Çıkış
-                    </button>
+                    <div v-else>
+                        <button @click="login" class="w-full bg-white text-slate-900 py-2 rounded font-bold hover:bg-slate-200 transition flex items-center justify-center gap-2">
+                            <i class="fab fa-google"></i> Giriş Yap
+                        </button>
+                    </div>
                 </div>
             </aside>
 
-            <main class="flex-1 flex flex-col min-w-0 bg-slate-50">
-                <header class="bg-white shadow-sm border-b px-8 py-5 flex items-center justify-between z-10">
-                    <div>
-                        <h2 class="text-2xl font-bold text-slate-800">{{ currentTabTitle }}</h2>
-                        <p class="text-sm text-slate-500">Dijital kayıt yönetimi ve arşivleme sistemi</p>
-                    </div>
+            <main class="flex-1 flex flex-col min-w-0 bg-slate-50 relative">
+                <header class="bg-white shadow-sm border-b px-8 py-4 flex items-center justify-between z-10">
+                    <h2 class="text-2xl font-bold text-slate-800">{{ currentTabTitle }}</h2>
+                    
                     <div class="flex items-center gap-4">
                         <div class="relative">
-                            <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
-                            <input v-model="searchQuery" type="text" placeholder="Kayıtlarda ara..." 
-                                class="pl-11 pr-4 py-2.5 w-72 bg-slate-100 border-none rounded-xl focus:ring-2 focus:ring-accent outline-none text-sm transition-all">
+                            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                            <input v-model="searchQuery" type="text" placeholder="Arşivde ara..." class="pl-10 pr-4 py-2 w-64 bg-slate-100 rounded-lg focus:ring-2 focus:ring-accent outline-none text-sm">
                         </div>
-                        <button @click="showAddModal = true" class="bg-primary hover:bg-slate-800 text-white px-5 py-2.5 rounded-xl text-sm font-medium shadow-lg hover:shadow-xl transition-all flex items-center gap-2">
-                            <i class="fas fa-plus"></i> Yeni Kayıt
+                        <button v-if="isAdmin" @click="showAddModal = true" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-lg transition flex items-center gap-2">
+                            <i class="fas fa-plus"></i> Belge Ekle
                         </button>
                     </div>
                 </header>
 
                 <div class="flex-1 overflow-auto p-8">
-                    
-                    <div v-if="activeList.length === 0" class="h-full flex flex-col items-center justify-center text-slate-400">
-                        <i class="far fa-folder-open text-6xl mb-4 opacity-50"></i>
-                        <p class="text-lg">Bu kategoride veya arama sonucunda kayıt bulunamadı.</p>
+                    <div v-if="activeList.length === 0" class="h-full flex flex-col items-center justify-center text-slate-400 opacity-60">
+                        <i class="fas fa-box-open text-6xl mb-4"></i>
+                        <p>Henüz kayıt bulunamadı.</p>
                     </div>
 
-                    <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <div v-for="doc in activeList" :key="doc.id" class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all group relative overflow-hidden">
-                            <div class="absolute top-0 left-0 w-1 h-full" :class="currentTab === 'ssk' ? 'bg-green-500' : 'bg-indigo-500'"></div>
+                    <div v-else class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                        <div v-for="doc in activeList" :key="doc.id" class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-all flex flex-col relative group">
                             
-                            <div class="flex justify-between items-start mb-3">
-                                <span class="text-xs font-bold px-2 py-1 rounded bg-slate-100 text-slate-500 uppercase tracking-wider">
-                                    {{ doc.type || 'BELGE' }}
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="bg-blue-100 text-blue-800 text-xs font-bold px-2 py-1 rounded">
+                                    <i class="fas fa-folder mr-1"></i> {{ doc.tag || 'Genel' }}
                                 </span>
-                                <button @click="deleteDocument(doc.id)" class="text-slate-300 hover:text-red-500 transition-colors">
+                                <button v-if="isAdmin" @click="deleteDocument(doc.id)" class="text-slate-300 hover:text-red-600 transition p-1">
                                     <i class="fas fa-trash-alt"></i>
                                 </button>
                             </div>
 
-                            <h3 class="font-bold text-lg text-slate-800 mb-2 line-clamp-2">{{ doc.title }}</h3>
-                            
-                            <div class="text-sm text-slate-500 space-y-1 mb-4">
-                                <p><i class="far fa-calendar-alt w-5"></i> {{ doc.date }}</p>
-                                <p><i class="far fa-user w-5"></i> {{ doc.author }}</p>
-                            </div>
+                            <h3 class="font-bold text-lg text-slate-800 mb-2">{{ doc.title }}</h3>
+                            <p class="text-sm text-slate-600 mb-4 line-clamp-3 bg-slate-50 p-2 rounded">{{ doc.desc }}</p>
 
-                            <div class="pt-4 border-t border-slate-50 flex items-center justify-between">
-                                <span class="text-xs text-slate-400 font-mono">ID: {{ doc.id.slice(0,8) }}...</span>
-                                <button class="text-accent text-sm font-medium hover:underline">Detaylar <i class="fas fa-arrow-right ml-1"></i></button>
+                            <div class="mt-auto pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
+                                <span><i class="far fa-calendar-alt"></i> {{ doc.date }}</span>
+                                <span>Ekleyen: {{ doc.author }}</span>
                             </div>
                         </div>
                     </div>
@@ -157,30 +128,29 @@
             </main>
         </div>
 
-        <div v-if="showAddModal" class="fixed inset-0 z-[70] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-[fadeIn_0.3s_ease-out]">
+        <div v-if="showAddModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+            <div class="bg-white rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl">
                 <div class="bg-primary p-4 text-white flex justify-between items-center">
-                    <h3 class="font-bold text-lg">Yeni {{ currentTabTitle }} Ekle</h3>
-                    <button @click="showAddModal = false" class="text-white/70 hover:text-white"><i class="fas fa-times"></i></button>
+                    <h3 class="font-bold">Yeni Kayıt Oluştur</h3>
+                    <button @click="showAddModal = false"><i class="fas fa-times"></i></button>
                 </div>
                 <div class="p-6 space-y-4">
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Belge Başlığı / Adı</label>
-                        <input v-model="newDocTitle" type="text" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-accent outline-none" placeholder="Örn: 2024 Yılı Faaliyet Raporu">
+                        <label class="text-sm font-bold text-slate-700">Belge Başlığı</label>
+                        <input v-model="form.title" type="text" class="w-full p-3 border rounded-lg mt-1 focus:ring-2 focus:ring-accent outline-none" placeholder="Örn: Yönetim Kurulu Kararı No:5">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Kategori / Alt Tür</label>
-                        <select v-model="newDocType" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-accent outline-none bg-white">
-                            <option>Genel Belge</option>
-                            <option>Rapor</option>
-                            <option>Tutanak</option>
-                            <option>Arşiv Kaydı</option>
-                        </select>
+                        <label class="text-sm font-bold text-slate-700">Etiket / Klasör Adı</label>
+                        <input v-model="form.tag" type="text" class="w-full p-3 border rounded-lg mt-1 focus:ring-2 focus:ring-accent outline-none" placeholder="Örn: Gizli Belgeler, 2024 Raporları...">
+                    </div>
+                    <div>
+                        <label class="text-sm font-bold text-slate-700">İçerik / Açıklama</label>
+                        <textarea v-model="form.desc" rows="4" class="w-full p-3 border rounded-lg mt-1 focus:ring-2 focus:ring-accent outline-none" placeholder="Belge içeriğini buraya yazın veya yapıştırın..."></textarea>
                     </div>
                 </div>
-                <div class="p-4 bg-slate-50 flex justify-end gap-3">
-                    <button @click="showAddModal = false" class="px-4 py-2 text-slate-600 font-medium hover:bg-slate-200 rounded-lg transition">İptal</button>
-                    <button @click="saveDocument" class="px-6 py-2 bg-accent text-white font-medium rounded-lg hover:bg-blue-600 shadow-lg shadow-blue-500/30 transition">Kaydet</button>
+                <div class="p-4 bg-slate-50 flex justify-end gap-3 border-t">
+                    <button @click="showAddModal = false" class="px-4 py-2 text-slate-600 hover:bg-slate-200 rounded-lg">İptal</button>
+                    <button @click="saveDocument" class="px-6 py-2 bg-accent text-white font-bold rounded-lg hover:bg-blue-700 shadow-lg">Arşive Kaydet</button>
                 </div>
             </div>
         </div>
@@ -192,7 +162,6 @@
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // CONFIG (Senin Bilgilerin)
         const firebaseConfig = {
             apiKey: "AIzaSyAEd7BwfA2WHo7lZwrtBc1FN3rKvKa6fGA",
             authDomain: "dijitalarsiv-e9742.firebaseapp.com",
@@ -207,7 +176,10 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        const { createApp, ref, computed, onMounted } = Vue;
+        // ÖZEL ADMİN MAİLİ
+        const ADMIN_EMAIL = "selen_yilmaz24@erdogan.edu.tr";
+
+        const { createApp, ref, computed, reactive } = Vue;
 
         createApp({
             setup() {
@@ -217,92 +189,85 @@
                 const searchQuery = ref('');
                 const showAddModal = ref(false);
                 const sskDocs = ref([]);
-                const libraryDocs = ref([]);
-                
-                // Form Data
-                const newDocTitle = ref('');
-                const newDocType = ref('Genel Belge');
+                const libDocs = ref([]);
 
-                // Auth
+                const form = reactive({ title: '', tag: '', desc: '' });
+
+                // Admin mi kontrolü (Kod içindeki kontrol)
+                const isAdmin = computed(() => {
+                    return user.value && user.value.email === ADMIN_EMAIL;
+                });
+
                 const login = async () => {
-                    const provider = new GoogleAuthProvider();
-                    try { await signInWithPopup(auth, provider); } catch(e) { console.error(e); }
+                    try { await signInWithPopup(auth, new GoogleAuthProvider()); } 
+                    catch(e) { console.error(e); }
                 };
 
                 const logout = () => signOut(auth);
 
-                // Listen Auth State
                 onAuthStateChanged(auth, (u) => {
                     user.value = u;
                     isLoading.value = false;
-                    if(u) fetchData();
+                    fetchData(); // Giriş yapmasa bile verileri çek (Okuma izni herkese açık olduğu için)
                 });
 
-                // Fetch Data Realtime
                 const fetchData = () => {
-                    // SSK
-                    const qSSK = query(collection(db, 'ssk'), orderBy('date', 'desc')); // Tarihe göre sıralı
-                    onSnapshot(qSSK, (snap) => {
+                    // SSK Verileri
+                    onSnapshot(query(collection(db, 'ssk'), orderBy('createdAt', 'desc')), (snap) => {
                         sskDocs.value = snap.docs.map(d => ({id: d.id, ...d.data()}));
                     });
-
-                    // Library
-                    const qLib = query(collection(db, 'kutuphane'), orderBy('date', 'desc'));
-                    onSnapshot(qLib, (snap) => {
-                        libraryDocs.value = snap.docs.map(d => ({id: d.id, ...d.data()}));
+                    // Kütüphane Verileri
+                    onSnapshot(query(collection(db, 'kutuphane'), orderBy('createdAt', 'desc')), (snap) => {
+                        libDocs.value = snap.docs.map(d => ({id: d.id, ...d.data()}));
                     });
                 };
 
-                // Computed Properties
-                const currentTabTitle = computed(() => currentTab.value === 'ssk' ? 'SSK Arşivi' : 'Kütüphane Kayıtları');
-                
                 const activeList = computed(() => {
-                    const list = currentTab.value === 'ssk' ? sskDocs.value : libraryDocs.value;
+                    const list = currentTab.value === 'ssk' ? sskDocs.value : libDocs.value;
                     if(!searchQuery.value) return list;
+                    const q = searchQuery.value.toLowerCase();
                     return list.filter(item => 
-                        item.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-                        item.author.toLowerCase().includes(searchQuery.value.toLowerCase())
+                        item.title.toLowerCase().includes(q) || 
+                        item.tag.toLowerCase().includes(q) ||
+                        (item.desc && item.desc.toLowerCase().includes(q))
                     );
                 });
-                
-                const filteredSSK = computed(() => sskDocs.value); // Badge sayıları için
-                const filteredLibrary = computed(() => libraryDocs.value);
 
-                // Actions
+                const currentTabTitle = computed(() => currentTab.value === 'ssk' ? 'SSK Arşivi' : 'Kütüphane');
+
                 const saveDocument = async () => {
-                    if(!newDocTitle.value) return alert("Başlık giriniz.");
+                    if(!form.title) return alert("Lütfen en azından bir başlık girin.");
                     
                     try {
-                        const coll = currentTab.value;
-                        await addDoc(collection(db, coll), {
-                            title: newDocTitle.value,
-                            type: newDocType.value,
+                        await addDoc(collection(db, currentTab.value), {
+                            title: form.title,
+                            tag: form.tag || 'Genel',
+                            desc: form.desc,
                             date: new Date().toLocaleString('tr-TR'),
+                            createdAt: Date.now(), // Sıralama için
                             author: user.value.displayName,
                             authorEmail: user.value.email
                         });
                         showAddModal.value = false;
-                        newDocTitle.value = '';
+                        form.title = ''; form.tag = ''; form.desc = '';
                     } catch(e) {
-                        alert("Ekleme yetkiniz yok veya bir hata oluştu: " + e.message);
+                        alert("HATA: Kayıt ekleme yetkiniz yok! Sadece yetkili yönetici ekleyebilir.");
                     }
                 };
 
                 const deleteDocument = async (id) => {
-                    if(!confirm("Bu kaydı silmek istediğinize emin misiniz?")) return;
+                    if(!confirm("Bu kaydı kalıcı olarak silmek istiyor musunuz?")) return;
                     try {
                         await deleteDoc(doc(db, currentTab.value, id));
                     } catch(e) {
-                        alert("Silme yetkiniz yok. (Sadece Admin veya ekleyen kişi silebilir - Firebase kurallarına bağlı)");
+                        alert("Silme yetkiniz yok!");
                     }
                 };
 
                 return {
-                    user, isLoading, login, logout,
-                    currentTab, currentTabTitle,
-                    searchQuery, activeList,
-                    showAddModal, newDocTitle, newDocType, saveDocument, deleteDocument,
-                    filteredSSK, filteredLibrary
+                    user, isAdmin, isLoading, login, logout,
+                    currentTab, currentTabTitle, searchQuery, activeList,
+                    showAddModal, form, saveDocument, deleteDocument
                 };
             }
         }).mount('#app');
